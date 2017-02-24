@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Provider, connect } from 'react-redux';
-
 import { Button } from 'react-universal-ui';
+
 import Routes from './routes';
+import { colors } from './utils';
 import * as appActions from 'store/action/app';
 
 export default function AppContainer ({store}) {
@@ -29,8 +30,7 @@ export class App extends Component {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		justifyContent: 'center',
-		alignItems: 'center',
+		backgroundColor: colors.background,
 	},
 	welcome: {
 		fontSize: 20,

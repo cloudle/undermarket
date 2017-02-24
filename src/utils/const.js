@@ -6,7 +6,7 @@ export const colors = {
 };
 
 export const sizes = {
-	navigationHeight: 80,
-	leftPaneSize: 350,
-	rightPaneSize: 400,
+	navigationHeight: 60,
+	leftPaneSize: 265,
+	rightPaneSize: 300,
 };
