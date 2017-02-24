@@ -1,3 +1,4 @@
+export * from './reducers/app';
 import { createStore, compose, combineReducers, applyMiddleware } from 'redux';
 import createLogger from 'redux-logger';
 import reducers from './reducers';

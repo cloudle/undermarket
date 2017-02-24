@@ -1,9 +1,16 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { connect } from 'react-redux';
+import { Provider, connect } from 'react-redux';
 
 import { Button } from 'react-universal-ui';
+import Routes from './routes';
 import * as appActions from 'store/action/app';
+
+export default function AppContainer ({store}) {
+	return <Provider store={store}>
+		<App/>
+	</Provider>
+}
 
 @connect(({app}) => {
 	return {
@@ -11,24 +18,10 @@ import * as appActions from 'store/action/app';
 	}
 })
 
-export default class app extends Component {
+export class App extends Component {
 	render() {
 		return <View style={styles.container}>
-			<Text style={styles.welcome}>
-				Welcome to React Native!
-			</Text>
-			<Text style={styles.instructions}>
-				To get started, edit src/app.js
-			</Text>
-			<Text style={styles.instructions}>
-				Press Cmd+R to reload,{'\n'}
-				Cmd+D or shake for dev menu
-			</Text>
-			<Button
-				wrapperStyle={styles.counterButton}
-				title={"Click me! " + this.props.counter} onPress={() => {
-					this.props.dispatch(appActions.increaseCounter());
-				}}/>
+			<Routes/>
 		</View>
 	}
 }
