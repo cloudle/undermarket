@@ -1,5 +1,7 @@
 require('babel-core/register');
+require('babel-polyfill');
 const express = require('express');
+require('./server/index');
 
 const production = process.env.NODE_ENV === 'production',
 	port = process.env.PORT || 2017,
@@ -20,11 +22,11 @@ if (!production) {
 	});
 }
 
-app.use('/', express.static('./web/'));
-
 app.use(function (req, res, next) {
 	require('./server/index')(req, res, next)
 });
+
+app.use('/', express.static('./web/'));
 
 app.listen(port, '0.0.0.0', function (err, result) {
 	if (err) return console.log(err);
