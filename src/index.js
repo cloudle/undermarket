@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Provider, connect } from 'react-redux';
 import { Button } from 'react-universal-ui';
+import "react-image-gallery/styles/css/image-gallery.css";
 
 import Routes from './routes';
 import { colors } from './utils';
