@@ -6,7 +6,6 @@
 web
 !web/index.html
 
-
 # Xcode
 #
 build/
@@ -38,6 +37,7 @@ local.properties
 # node.js
 #
 node_modules/
+graphql.config.json
 npm-debug.log
 yarn-error.log
 

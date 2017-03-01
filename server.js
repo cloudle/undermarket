@@ -1,7 +1,11 @@
 require('babel-core/register');
 require('babel-polyfill');
-const express = require('express');
 require('./server/index');
+
+const path = require('path'),
+	express = require('express'),
+	schemaPath = path.join(__dirname, './graphql.config.json'),
+	generateSchema = require('./server/utils/schemaGenerator');
 
 const production = process.env.NODE_ENV === 'production',
 	port = process.env.PORT || 2017,
@@ -11,10 +15,15 @@ if (!production) {
 	const chokidar = require('chokidar');
 	const watcher = chokidar.watch('./server');
 
+	generateSchema(schemaPath);
+
 	watcher.on('ready', function() {
 		watcher.on('all', function() {
 			Object.keys(require.cache).forEach(function(id) {
-				if (/[\/\\]server[\/\\]/.test(id)) delete require.cache[id]
+				if (/[\/\\]server[\/\\]/.test(id)) {
+					delete require.cache[id]
+					generateSchema(schemaPath);
+				}
 			});
 
 			console.log("Server updated..");
