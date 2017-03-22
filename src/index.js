@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Provider, connect } from 'react-redux';
 import { Button } from 'react-universal-ui';
-import "react-image-gallery/styles/css/image-gallery.css";
+import 'react-image-gallery/styles/css/image-gallery.css';
 
 import Routes from './routes';
 import { colors } from './utils';
@@ -48,3 +48,45 @@ const styles = StyleSheet.create({
 		width: 120, marginTop: 10,
 	}
 });
+
+import { SubscriptionClient, addGraphQLSubscriptions } from 'subscriptions-transport-ws';
+import ApolloClient, {createNetworkInterface} from 'apollo-client';
+import gql from 'graphql-tag';
+
+const wsClient = new SubscriptionClient('ws://localhost:5000/', {
+	reconnect: true,
+	connectionParams: {
+		// Pass any arguments you want for initialization
+	}
+});
+
+const networkInterface = createNetworkInterface({
+	uri: 'http://localhost:2017/api',
+	opts: {
+		credentials: 'same-origin',
+	},
+});
+
+const networkInterfaceWithSubscriptions = addGraphQLSubscriptions(
+	networkInterface,
+	wsClient,
+);
+
+const apolloClient = new ApolloClient({
+	networkInterface: networkInterfaceWithSubscriptions,
+});
+
+apolloClient
+	.subscribe({ query: gql`
+		subscription onCounterIncrease {
+			counterIncrease
+		}
+	`})
+	.subscribe({
+		next (data) {
+			console.log(data);
+		},
+		error (err) {
+			console.log(err);
+		}
+	});

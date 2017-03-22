@@ -1,10 +1,23 @@
 import express from 'express';
-import redis from 'redis';
+import bodyParser from 'body-parser';
 import { graphql } from 'graphql';
 import expressGraph from 'express-graphql';
+import { graphqlExpress, graphiqlExpress } from 'graphql-server-express';
+import { PubSub, SubscriptionManager } from 'graphql-subscriptions';
+import { startSubscriptionServer } from './subscription';
 
+import redis from 'redis';
+import { neoConnection } from './db';
 import schema from './graphql';
 import { Pi } from './utils';
+
+const pubsub = new PubSub();
+const subscriptionManager = new SubscriptionManager({
+	schema,
+	pubsub,
+});
+
+startSubscriptionServer(subscriptionManager);
 
 const router = express.Router(),
 	redisClient = redis.createClient();
@@ -26,10 +39,32 @@ router.get('/ping', function (req, res) {
 	});
 });
 
-router.use('/api', expressGraph({
+router.use('/api', bodyParser.json(), graphqlExpress({
 	schema,
 	rootValue: {},
-	graphiql: true,
 }));
+
+router.use('/graphiql', graphiqlExpress({
+	endpointURL: '/api',
+}));
+
+router.get('*', function (req, res) {
+	const payload = {
+		id: '1',
+		content: 'Hello!',
+	};
+	pubsub.publish('counterIncrease', payload);
+
+	const session = neoConnection.session()
+		.run(`
+			START n=NODE(59) 
+			MATCH (account:Account)-[r:REGISTER]->(:JobRequest) 
+			RETURN account, r`)
+		.then(result => {
+			res.json(result);
+			session.close();
+		})
+		.catch(error => res.send(error));
+});
 
 module.exports = router;

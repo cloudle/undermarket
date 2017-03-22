@@ -21,7 +21,7 @@ if (!production) {
 		watcher.on('all', function() {
 			Object.keys(require.cache).forEach(function(id) {
 				if (/[\/\\]server[\/\\]/.test(id)) {
-					delete require.cache[id]
+					delete require.cache[id];
 					generateSchema(schemaPath);
 				}
 			});
@@ -35,7 +35,7 @@ app.use(function (req, res, next) {
 	require('./server/index')(req, res, next)
 });
 
-app.use('/', express.static('./web/'));
+app.use(express.static('./web/'));
 
 app.listen(port, '0.0.0.0', function (err, result) {
 	if (err) return console.log(err);
